@@ -14,7 +14,7 @@ resource "null_resource" "preupgrade_check" {
 
   provisioner "local-exec" {
     command = <<-EOT
-      ./preupgrade_check_enhanced1.sh
+      ./preupgrade_check_enhanced2.sh
     EOT
   }
 }
