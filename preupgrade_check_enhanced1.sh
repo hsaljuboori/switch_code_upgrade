@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Pre-upgrade check script for Cisco Nexus 9K switches
+# Enhanced pre-upgrade check script for Cisco Nexus 9K switches
 
 # Redirect stdout and stderr to a log file
-log_file="preupgrade_check_logs.log"
-exec &> "$log_file"
+log_file="preupgrade_check_logs_enhanced1.log"
+exec &> >(tee -a "$log_file")
 
 echo "Starting pre-upgrade checks..."
 
@@ -26,15 +26,19 @@ run_prechecks() {
     }
 
     # Check Disk Space
+    echo "Pre-checks for ${switch_ip} - Disk Space:"
     execute_ssh "show system resources | include bootflash"
 
     # Check Interface Status
+    echo "Pre-checks for ${switch_ip} - Interface Status:"
     execute_ssh "show interface brief"
 
     # Run a show version command
+    echo "Pre-checks for ${switch_ip} - Show Version:"
     show_version_output=$(execute_ssh "show version")
-    echo "Show version command executed successfully for ${switch_ip}:"
     echo "$show_version_output"
+
+    echo "--------------------------------------------------------"
     echo "Pre-upgrade checks passed for ${switch_ip}!"
 }
 
