@@ -15,7 +15,7 @@ resource "null_resource" "upgrade_switch" {
 
   provisioner "local-exec" {
     command = <<-EOT
-      ansible-playbook -i ${element(var.switch_ips, count.index)}, upgrade_switch.yml
+      ansible-playbook -i ${element(var.switch_ips, count.index)}, upgrade_switch_all.yml
     EOT
   }
 }
