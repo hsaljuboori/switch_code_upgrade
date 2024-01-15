@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Basic pre-upgrade check script
+
+# Redirect stdout and stderr to a log file
+exec &> /path/to/your/preupgrade_check.log
+
+echo "Starting pre-upgrade checks..."
+
+# Check Disk Space
+disk_space=$(df -h /bootflash)
+echo "Disk Space:"
+echo "$disk_space"
+
+# Check Interface Status
+interface_status=$(show interfaces status)
+echo "Interface Status:"
+echo "$interface_status"
+
+# Run a show version command
+show_version_output=$(show version)
+
+# Check if the show version command was successful
+if [ $? -eq 0 ]; then
+    echo "Show version command executed successfully:"
+    echo "$show_version_output"
+    echo "Pre-upgrade checks passed!"
+else
+    echo "Error: Pre-upgrade checks failed. Check the logs for details."
+    exit 1
+fi
+

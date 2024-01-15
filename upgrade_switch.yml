@@ -1,0 +1,22 @@
+
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: Copy the new image via SCP
+      scp:
+        src: /path/to/your/image.bin
+        dest: /bootflash/
+        remote_src: yes
+      register: scp_result
+
+    - name: Check if SCP was successful
+      fail:
+        msg: "SCP failed: {{ scp_result.msg }}"
+      when: not scp_result|success
+
+    # Add additional tasks for validation and rollback as needed
+    # ...
+
+    - name: Upgrade the switch
+      command: install all nxos /bootflash/your_image.bin
+

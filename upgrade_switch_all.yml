@@ -1,0 +1,66 @@
+
+- hosts: nexus_switches
+  gather_facts: false
+  vars:
+    - image_paths:
+        - "/path/to/your/9.3(13)/image.bin"
+        - "/path/to/your/10.2(6)M/image.bin"
+    - expected_md5sums:
+        - "expected_md5sum_for_9.3(13)"
+        - "expected_md5sum_for_10.2(6)M"
+
+  tasks:
+    - name: Copy images via SCP
+      ansible.builtin.scp:
+        src: "{{ item }}"
+        dest: /bootflash/
+      with_items: "{{ image_paths }}"
+
+    - name: Verify MD5sums
+      shell: "md5sum /bootflash/{{ item.0 }} | cut -d' ' -f1"
+      loop: "{{ image_paths }}"
+      register: md5sum_results
+      changed_when: false
+
+    - name: Check MD5sums
+      assert:
+        that:
+          - item.0 == item.1
+        fail_msg: "MD5sum verification failed for {{ item.0 }}"
+      loop: "{{ zip(md5sum_results.results, expected_md5sums) }}"
+
+    - name: Pre-upgrade check
+      command: "/path/to/your/basic_preupgrade_check.sh"
+      register: preupgrade_output
+      changed_when: false
+
+    # Add additional tasks for pre-upgrade checks as needed
+    # ...
+
+    - name: Upgrade to 9.3(13)
+      command: "install all nxos /bootflash/{{ image_paths[0] }}"
+      register: upgrade_output
+      changed_when: false
+
+    - name: Validate upgrade to 9.3(13)
+      debug:
+        var: upgrade_output.stdout_lines
+      when: "'Rollback' not in upgrade_output.stdout_lines"
+
+    - name: Upgrade to 10.2(6)M
+      command: "install all nxos /bootflash/{{ image_paths[1] }}"
+      register: upgrade_output_second
+      changed_when: false
+
+    - name: Validate upgrade to 10.2(6)M
+      debug:
+        var: upgrade_output_second.stdout_lines
+      when: "'Rollback' not in upgrade_output_second.stdout_lines"
+
+    - name: Clean up unnecessary images
+      command: "delete /recursive /force /quiet /prompt-level=0 /path=/bootflash/your_old_image.bin"
+      changed_when: false
+
+    # Add additional tasks for cleanup as needed
+    # ...
+
