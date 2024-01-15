@@ -3,7 +3,7 @@ provider "null" {}
 
 variable "switch_ips" {
   type    = list(string)
-  default = ["10.18.1.1", "10.18.1.2", "10.18.1.3"] 
+  default = ["192.168.86.28", "192.168.86.135"] 
 }
 
 resource "null_resource" "upgrade_switch" {
