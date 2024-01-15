@@ -10,6 +10,11 @@
         - "expected_md5sum_for_10.2(6)M"
 
   tasks:
+    - name: Pre-upgrade checks
+      command: "preupgrade_check_enhanced1.sh"
+      register: preupgrade_output
+      changed_when: false
+
     - name: Copy images via SCP
       ansible.builtin.scp:
         src: "{{ item }}"
@@ -30,7 +35,7 @@
       loop: "{{ zip(md5sum_results.results, expected_md5sums) }}"
 
     - name: Pre-upgrade check
-      command: "/path/to/your/basic_preupgrade_check.sh"
+      command: "preupgrade_check_enhanced1.sh"
       register: preupgrade_output
       changed_when: false
 
