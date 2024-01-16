@@ -9,7 +9,7 @@ exec &> >(tee -a "$log_file")
 echo "Starting pre-upgrade checks..."
 
 # Prompt user for password securely
-switch_password="Iraq@1234"
+switch_password="******"
 
 # Function to run pre-checks for a specific switch
 run_prechecks() {
